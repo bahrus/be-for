@@ -9,6 +9,10 @@ export class BeFor extends BE {
             isParsedProp: 'isParsed'
         };
     }
+    async onValues(self) {
+        const {} = await import('./prsValue.js');
+        return {};
+    }
 }
 const tagName = 'be-for';
 const ifWantsToBe = 'for';

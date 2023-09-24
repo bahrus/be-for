@@ -12,6 +12,13 @@ export class BeFor extends BE<AP, Actions> implements Actions{
             isParsedProp: 'isParsed'
         } as BEConfig
     }
+
+    async onValues(self: this) {
+        const {} = await import('./prsValue.js');
+        return {
+
+        } as PAP
+    }
 }
 
 export interface BeFor extends AllProps{}
