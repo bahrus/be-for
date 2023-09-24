@@ -24,6 +24,7 @@
   ],
   "dependencies": {
     "be-enhanced": "0.0.52",
+    "be-exportable": "0.0.90",
     "be-hive": "0.0.123",
     "be-propagating": "0.0.25",
     "be-value-added": "0.0.7",
