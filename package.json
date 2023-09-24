@@ -1,11 +1,45 @@
 {
   "name": "be-for",
   "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "keywords": [
+    "web-components",
+    "web-component",
+    "custom-element",
+    "custom-elements",
+    "template",
+    "bind",
+    "observe",
+    "conditional"
+  ],
+  "description": "Create inline computed microdata property HTML signals with script tags.",
+  "main": "be-for.js",
+  "module": "be-for.js",
+  "exports":{
+    ".": "./be-for.js",
+    "./be-for.js": "./be-for.js"
   },
-  "author": "",
+  "files": [
+    "*.js",
+    "types.d.ts"
+  ],
+  "dependencies": {
+    "be-enhanced": "0.0.52",
+    "be-hive": "0.0.123",
+    "be-propagating": "0.0.25",
+    "be-value-added": "0.0.7",
+    "trans-render": "0.0.706",
+    "xtal-element": "0.0.579"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.38.1",
+    "may-it-serve": "0.0.6"
+  },
+  "scripts": {
+    "serve": "node node_modules/may-it-serve",
+    "test": "playwright test",
+    "safari": "npx playwright wk http://localhost:3030",
+    "update": "ncu -u && npm install"
+  },
+  "author": "anderson.bruce.b@gmail.com",
   "license": "MIT"
 }
