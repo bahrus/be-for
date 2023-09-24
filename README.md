@@ -40,3 +40,13 @@ The output element supports an interesting use of the "for" attribute, which [be
 </div>
 ```
 
+## Example 1c [TODO]
+
+Values coming from host ($$)
+
+```html
+<my-custom-element>
+    <script nomodule>
+</my-custom-element>
+```
+
