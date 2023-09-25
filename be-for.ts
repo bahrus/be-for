@@ -57,7 +57,9 @@ const xe = new XE<AP, Actions>({
             ...propInfo
         },
         actions:{
-
+            importSymbols: {
+                ifAllOf: ['isParsed', 'nameOfFormula', 'args', 'scriptRef']
+            }
         }
    },
    superclass: BeFor
