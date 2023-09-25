@@ -2,9 +2,9 @@
 
 Create inline computed microdata property HTML signals with script tags.
 
-The output element supports an interesting use of the "for" attribute, which [be-calculating](https://github.com/bahrus/be-calculating) builds on.  However, be-calculating is somewhat tied to the output element.
+The *output* element supports an interesting use of the "for" attribute, which [be-calculating](https://github.com/bahrus/be-calculating) builds on.  However, be-calculating is somewhat tied to the output element.
 
-*be-for* builds on similar ideas, but focuses it's enhancements on microdata-based elements, and also supports name attributes.
+*be-for* builds on similar ideas, but focuses its enhancements on microdata-based elements, and also supports name attributes.
 
 
 

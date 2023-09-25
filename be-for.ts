@@ -19,6 +19,22 @@ export class BeFor extends BE<AP, Actions> implements Actions{
 
         } as PAP
     }
+
+    async importSymbols(self: this): ProPAP {
+        import('be-exportable/be-exportable.js');
+        const {scriptRef, enhancedElement, nameOfFormula} = self;
+        const {findRealm} = await import('trans-render/lib/findRealm.js');
+        const target = await findRealm(enhancedElement, scriptRef!) as HTMLScriptElement | null;
+        if(target === null) throw 404;
+        if(!target.src){
+            const {rewrite} = await import('./rewrite.js');
+            rewrite(self, target);
+        }
+        const exportable = await (<any>target).beEnhanced.whenResolved('be-exportable') as BeExportableAllProps;
+        return {
+            formula: exportable.exports[nameOfCalculator!]
+        }
+    }
 }
 
 export interface BeFor extends AllProps{}
@@ -33,6 +49,8 @@ const xe = new XE<AP, Actions>({
         isEnh: true,
         propDefaults:{
             ...propDefaults,
+            scriptRef: 'previousElementSibling',
+            nameOfFormula: 'formula'
         },
         propInfo: {
             ...propInfo
