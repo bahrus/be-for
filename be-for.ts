@@ -3,6 +3,7 @@ import {BEConfig} from 'be-enhanced/types';
 import {XE} from 'xtal-element/XE.js';
 import {Actions, AllProps, AP, PAP, ProPAP, POA} from './types';
 import {register} from 'be-hive/register.js';
+import {AllProps as  BeExportableAllProps} from 'be-exportable/types';
 
 export class BeFor extends BE<AP, Actions> implements Actions{
     static override get beConfig(){
@@ -32,7 +33,7 @@ export class BeFor extends BE<AP, Actions> implements Actions{
         }
         const exportable = await (<any>target).beEnhanced.whenResolved('be-exportable') as BeExportableAllProps;
         return {
-            formula: exportable.exports[nameOfCalculator!]
+            formulaEvaluator: exportable.exports[nameOfFormula!]
         }
     }
 }

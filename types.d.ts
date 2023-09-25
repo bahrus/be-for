@@ -6,7 +6,12 @@ export interface EndUserProps extends IBE{
     Value?: Array<ValueStatement>;
     scriptRef?: Target,
     nameOfFormula?: string,
+    
+}
 
+export interface Arg{
+    prop?: string,
+    type?: Types
 }
 
 //copied from be-switched.  Share from trans-render?
@@ -15,6 +20,7 @@ export type Types = '$' | '#' | '@' | '/';
 export interface AllProps extends EndUserProps{
     isParsed?: boolean;
     formulaEvaluator?: (vals: any) => any;
+    args?: Array<Arg>;
 }
 
 export type ValueStatement = string;
