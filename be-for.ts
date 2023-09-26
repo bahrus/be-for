@@ -102,7 +102,6 @@ async function evalFormula(self: AP){
         inputObj[prop!] = val;
     }
     const value = await formulaEvaluator!(inputObj);
-    console.log({value, inputObj});
     await setItemProp(enhancedElement, value.value, enhancedElement.getAttribute('itemprop')!);
 }
 

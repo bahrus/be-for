@@ -96,7 +96,6 @@ async function evalFormula(self) {
         inputObj[prop] = val;
     }
     const value = await formulaEvaluator(inputObj);
-    console.log({ value, inputObj });
     await setItemProp(enhancedElement, value.value, enhancedElement.getAttribute('itemprop'));
 }
 const tagName = 'be-for';

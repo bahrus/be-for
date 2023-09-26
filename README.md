@@ -55,7 +55,9 @@ Add more context to the scripting
     <script nomodule>
         ({isHappy, isWealthy, liberated}) => {
             console.log({isHappy, isWealthy, liberated});
-            return isHappy && !isWealthy && liberated.length > 17;
+            return {
+                value: isHappy && !isWealthy && liberated.length > 17
+            };
         }
     </script>
     <link itemprop=isInNirvana be-for='Value based on $isHappy, @isWealthy, #liberated.'>
@@ -79,3 +81,22 @@ Values coming from host (/)
 
 ## Example 2a [TODO]
 
+```html
+<form itemscope>
+    <link itemprop=isHappy href=https://schema.org/True>
+    <input type=checkbox name=isWealthy>
+    <div contenteditable id=liberated>abc</div>
+    ...
+
+    <script nomodule>
+        ({isHappy, isWealthy, liberated}) => {
+            console.log({isHappy, isWealthy, liberated});
+            return {
+                prop1: isHappy && !isWealthy && liberated.length > 17,
+                prop2: liberated.blink(),
+            };
+        }
+    </script>
+    <any-element itemprop=isInNirvana be-for='Assign based on $isHappy, @isWealthy, #liberated.'>
+</form>
+```
