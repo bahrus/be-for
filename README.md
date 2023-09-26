@@ -41,7 +41,28 @@ Maybe this should derive from be-linked
 </form>
 ```
 
-## Example 1c [TODO]
+## Example 1c
+
+Add more context to the scripting
+
+```html
+<form itemscope>
+    <link itemprop=isHappy href=https://schema.org/True>
+    <input type=checkbox name=isWealthy>
+    <div contenteditable id=liberated>abc</div>
+    ...
+
+    <script nomodule>
+        ({isHappy, isWealthy, liberated}) => {
+            console.log({isHappy, isWealthy, liberated});
+            return isHappy && !isWealthy && liberated.length > 17;
+        }
+    </script>
+    <link itemprop=isInNirvana be-for='Value based on $isHappy, @isWealthy, #liberated.'>
+</form>
+```
+
+## Example 1d [TODO]
 
 Values coming from host (/)
 
