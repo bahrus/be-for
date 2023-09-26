@@ -3,6 +3,7 @@ import {IBE} from 'be-enhanced/types';
 import {Target, Scope, ProxyPropChangeInfo} from 'trans-render/lib/types';
 import {BVAAllProps} from 'be-value-added/types';
 import {AP as BPAP, ISignal, Actions as BPActions} from 'be-propagating/types';
+import {ElTypes, SignalRefType} from 'be-linked/types';
 
 export interface EndUserProps extends IBE{
     Value?: Array<ValueStatement>;
@@ -13,17 +14,13 @@ export interface EndUserProps extends IBE{
 
 export interface Arg{
     prop?: string,
-    type?: Types,
+    type?: ElTypes,
     signal?: WeakRef<SignalRefType>,
 }
 
 
-
-//copied from be-switched.  Share from trans-render?
-export type Types = '$' | '#' | '@' | '/';
-
-//copied from be-switched.  share from ... where?
-export type SignalRefType = BVAAllProps | ISignal | HTMLElement;
+// //copied from be-switched.  share from ... where?
+// export type SignalRefType = BVAAllProps | ISignal | HTMLElement;
 
 export interface AllProps extends EndUserProps{
     isParsed?: boolean;
