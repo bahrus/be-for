@@ -13,6 +13,18 @@ export async function prsValue(self) {
         throw 'PE'; //Parse Error
     const { dependencies } = test;
     const splitDependencies = dependencies.split(',').map(x => x.trim());
-    console.log({ test, splitDependencies });
-    return {};
+    const args = [];
+    for (const dependency of splitDependencies) {
+        const type = dependency[0];
+        const prop = dependency.substring(1);
+        const arg = {
+            type,
+            prop
+        };
+        args.push(arg);
+    }
+    //console.log({test, splitDependencies});
+    return {
+        args
+    };
 }

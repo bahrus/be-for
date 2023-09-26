@@ -1,4 +1,4 @@
-import {AP, ProPAP, PAP, ParsedValueStatement} from './types';
+import {AP, ProPAP, PAP, ParsedValueStatement, Types, Arg} from './types';
 import {RegExpOrRegExpExt} from 'be-enhanced/types';
 import {arr, tryParse} from 'be-enhanced/cpu.js';
 
@@ -15,8 +15,18 @@ export async function prsValue(self: AP) : ProPAP {
     if(test === null) throw 'PE'; //Parse Error
     const {dependencies} = test;
     const splitDependencies = dependencies!.split(',').map(x => x.trim());
-    console.log({test, splitDependencies});
-    return {
-
+    const args: Array<Arg> = [];
+    for(const dependency of splitDependencies){
+        const type = dependency[0] as Types;
+        const prop = dependency.substring(1);
+        const arg: Arg = {
+            type,
+            prop
+        };
+        args.push(arg);
     }
+    //console.log({test, splitDependencies});
+    return {
+        args
+    };
 }
