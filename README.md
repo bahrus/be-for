@@ -1,4 +1,4 @@
-# be-for [TODO]
+# be-for [WIP]
 
 Create inline computed microdata property HTML signals with script tags.
 
@@ -8,7 +8,7 @@ The *output* element supports an interesting use of the "for" attribute, which [
 
 Maybe this should derive from be-linked
 
-## Example 1a [TODO]
+## Example 1a
 
 ```html
 <div itemscope>
