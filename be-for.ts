@@ -1,11 +1,12 @@
 import {BE, propDefaults, propInfo} from 'be-enhanced/BE.js';
 import {BEConfig} from 'be-enhanced/types';
 import {XE} from 'xtal-element/XE.js';
-import {Actions, AllProps, AP, PAP, ProPAP, POA} from './types';
+import {Actions, AllProps, AP, PAP, ProPAP, POA, SignalRefType} from './types';
 import {register} from 'be-hive/register.js';
 import {AllProps as  BeExportableAllProps} from 'be-exportable/types';
 import {findRealm} from 'trans-render/lib/findRealm.js';
 import {BVAAllProps} from 'be-value-added/types';
+import {setItemProp} from 'be-linked/setItemProp.js';
 
 export class BeFor extends BE<AP, Actions> implements Actions{
     static override get beConfig(){
@@ -65,8 +66,34 @@ export class BeFor extends BE<AP, Actions> implements Actions{
 
 }
 
-function evalFormula(self: AP){
+async function evalFormula(self: AP){
     const {formulaEvaluator, args, enhancedElement} = self;
+    const inputObj: {[key: string]:  any} = {};
+    for(const arg of args!){
+        const {signal, prop} = arg;
+        const ref = signal?.deref();
+        if(ref === undefined){
+            console.warn({arg, msg: "Out of scope"});
+            continue;
+        }
+        const val = getValue(ref);
+        inputObj[prop!] = val;
+    }
+    const value = formulaEvaluator!(inputObj);
+    await setItemProp(enhancedElement, value, enhancedElement.getAttribute('itemprop')!);
+}
+
+//shared with be-switched
+export function getValue(obj: SignalRefType){
+    if(obj instanceof HTMLElement){
+        if('value' in obj){
+            return obj.value;
+        }
+        //TODO:  hyperlinks
+        return obj.textContent;
+    }else{
+        return obj.value;
+    }
 }
 
 export interface BeFor extends AllProps{}

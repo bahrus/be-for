@@ -2,6 +2,7 @@ import { BE, propDefaults, propInfo } from 'be-enhanced/BE.js';
 import { XE } from 'xtal-element/XE.js';
 import { register } from 'be-hive/register.js';
 import { findRealm } from 'trans-render/lib/findRealm.js';
+import { setItemProp } from 'be-linked/setItemProp.js';
 export class BeFor extends BE {
     static get beConfig() {
         return {
@@ -57,8 +58,34 @@ export class BeFor extends BE {
         evalFormula(self);
     }
 }
-function evalFormula(self) {
+async function evalFormula(self) {
     const { formulaEvaluator, args, enhancedElement } = self;
+    const inputObj = {};
+    for (const arg of args) {
+        const { signal, prop } = arg;
+        const ref = signal?.deref();
+        if (ref === undefined) {
+            console.warn({ arg, msg: "Out of scope" });
+            continue;
+        }
+        const val = getValue(ref);
+        inputObj[prop] = val;
+    }
+    const value = formulaEvaluator(inputObj);
+    await setItemProp(enhancedElement, value, enhancedElement.getAttribute('itemprop'));
+}
+//shared with be-switched
+export function getValue(obj) {
+    if (obj instanceof HTMLElement) {
+        if ('value' in obj) {
+            return obj.value;
+        }
+        //TODO:  hyperlinks
+        return obj.textContent;
+    }
+    else {
+        return obj.value;
+    }
 }
 const tagName = 'be-for';
 const ifWantsToBe = 'for';
