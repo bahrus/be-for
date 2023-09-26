@@ -25,7 +25,7 @@ Maybe this should derive from be-linked
 ```
 
 
-## Example 1b [TODO]
+## Example 1b
 
 ```html
 <form itemscope>
