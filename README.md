@@ -35,7 +35,7 @@ Maybe this should derive from be-linked
     ...
 
     <script nomodule>
-        isHappy && !isWealthy && liberated.length > 17;
+        isHappy && !isWealthy && liberated.length > 17
     </script>
     <link itemprop=isInNirvana be-for='Value based on $isHappy, @isWealthy, #liberated.'>
 </form>
