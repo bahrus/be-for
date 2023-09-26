@@ -4,6 +4,8 @@ import {XE} from 'xtal-element/XE.js';
 import {Actions, AllProps, AP, PAP, ProPAP, POA} from './types';
 import {register} from 'be-hive/register.js';
 import {AllProps as  BeExportableAllProps} from 'be-exportable/types';
+import {findRealm} from 'trans-render/lib/findRealm.js';
+import {BVAAllProps} from 'be-value-added/types';
 
 export class BeFor extends BE<AP, Actions> implements Actions{
     static override get beConfig(){
@@ -36,6 +38,35 @@ export class BeFor extends BE<AP, Actions> implements Actions{
             formulaEvaluator: exportable.exports[nameOfFormula!]
         }
     }
+
+    async observe(self: this){
+        const {args, enhancedElement} = self;
+        for(const arg of args!){
+            const {prop, type} = arg;
+            switch(type){
+                case '$':
+                    const itemPropEl = await findRealm(enhancedElement, ['wis', prop!]) as HTMLElement;
+                    if(!itemPropEl) throw 404;
+                    if(itemPropEl.contentEditable){
+                        throw 'NI'
+                    }else{
+                        import('be-value-added/be-value-added.js');
+                        const beValueAdded = await  (<any>itemPropEl).beEnhanced.whenResolved('be-value-added') as BVAAllProps & EventTarget;
+                        arg.signal = new WeakRef<BVAAllProps>(beValueAdded);
+                        beValueAdded.addEventListener('value-changed', e => {
+                            evalFormula(self);
+                        });
+                    }
+            }
+        }
+        evalFormula(self);
+    }
+
+
+}
+
+function evalFormula(self: AP){
+    const {formulaEvaluator, args, enhancedElement} = self;
 }
 
 export interface BeFor extends AllProps{}
@@ -60,6 +91,9 @@ const xe = new XE<AP, Actions>({
             onValues: 'Value',
             importSymbols: {
                 ifAllOf: ['isParsed', 'nameOfFormula', 'args', 'scriptRef']
+            },
+            observe:{
+                ifAllOf: ['formulaEvaluator', 'args']
             }
         }
    },

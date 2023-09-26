@@ -6,7 +6,7 @@ The *output* element supports an interesting use of the "for" attribute, which [
 
 *be-for* builds on similar ideas, but focuses its enhancements on microdata-based elements, and also supports name attributes.
 
-
+Maybe this should derive from be-linked
 
 ## Example 1a [TODO]
 
@@ -21,6 +21,22 @@ The *output* element supports an interesting use of the "for" attribute, which [
         isHappy && !isWealthy
     </script>
     <link itemprop=isInNirvana be-for='Value based on $isHappy, $isWealthy.'>
+</div>
+```
+
+## From be-linked [TODO]
+
+```html
+<div itemscope>
+    <link itemprop=isHappy>
+    <link itemprop=isWealthy>
+
+    ...
+
+    <script nomodule>
+        isHappy && !isWealthy
+    </script>
+    <link itemprop=isInNirvana be-linked='Compute value based on $isHappy, $isWealthy.'>
 </div>
 ```
 

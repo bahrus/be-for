@@ -1,6 +1,7 @@
 import { BE, propDefaults, propInfo } from 'be-enhanced/BE.js';
 import { XE } from 'xtal-element/XE.js';
 import { register } from 'be-hive/register.js';
+import { findRealm } from 'trans-render/lib/findRealm.js';
 export class BeFor extends BE {
     static get beConfig() {
         return {
@@ -31,6 +32,33 @@ export class BeFor extends BE {
             formulaEvaluator: exportable.exports[nameOfFormula]
         };
     }
+    async observe(self) {
+        const { args, enhancedElement } = self;
+        for (const arg of args) {
+            const { prop, type } = arg;
+            switch (type) {
+                case '$':
+                    const itemPropEl = await findRealm(enhancedElement, ['wis', prop]);
+                    if (!itemPropEl)
+                        throw 404;
+                    if (itemPropEl.contentEditable) {
+                        throw 'NI';
+                    }
+                    else {
+                        import('be-value-added/be-value-added.js');
+                        const beValueAdded = await itemPropEl.beEnhanced.whenResolved('be-value-added');
+                        arg.signal = new WeakRef(beValueAdded);
+                        beValueAdded.addEventListener('value-changed', e => {
+                            evalFormula(self);
+                        });
+                    }
+            }
+        }
+        evalFormula(self);
+    }
+}
+function evalFormula(self) {
+    const { formulaEvaluator, args, enhancedElement } = self;
 }
 const tagName = 'be-for';
 const ifWantsToBe = 'for';
@@ -51,6 +79,9 @@ const xe = new XE({
             onValues: 'Value',
             importSymbols: {
                 ifAllOf: ['isParsed', 'nameOfFormula', 'args', 'scriptRef']
+            },
+            observe: {
+                ifAllOf: ['formulaEvaluator', 'args']
             }
         }
     },
