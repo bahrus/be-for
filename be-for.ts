@@ -15,10 +15,10 @@ export class BeFor extends BE<AP, Actions> implements Actions{
     }
 
     async onValues(self: this) {
-        const {} = await import('./prsValue.js');
-        return {
-
-        } as PAP
+        //TODO:  cache like be-switched
+        const {prsValue} = await import('./prsValue.js');
+        const parsed = await prsValue(self);
+        return parsed as PAP;
     }
 
     async importSymbols(self: this): ProPAP {
@@ -57,6 +57,7 @@ const xe = new XE<AP, Actions>({
             ...propInfo
         },
         actions:{
+            onValues: 'Value',
             importSymbols: {
                 ifAllOf: ['isParsed', 'nameOfFormula', 'args', 'scriptRef']
             }

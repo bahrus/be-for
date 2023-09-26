@@ -14,6 +14,8 @@ export interface Arg{
     type?: Types
 }
 
+
+
 //copied from be-switched.  Share from trans-render?
 export type Types = '$' | '#' | '@' | '/';
 
@@ -39,5 +41,5 @@ export interface Actions{
 }
 
 export interface ParsedValueStatement{
-    dependencies: string,
+    dependencies?: string,
 }

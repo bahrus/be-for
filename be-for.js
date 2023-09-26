@@ -10,8 +10,26 @@ export class BeFor extends BE {
         };
     }
     async onValues(self) {
-        const {} = await import('./prsValue.js');
-        return {};
+        //TODO:  cache like be-switched
+        const { prsValue } = await import('./prsValue.js');
+        const parsed = await prsValue(self);
+        return parsed;
+    }
+    async importSymbols(self) {
+        import('be-exportable/be-exportable.js');
+        const { scriptRef, enhancedElement, nameOfFormula } = self;
+        const { findRealm } = await import('trans-render/lib/findRealm.js');
+        const target = await findRealm(enhancedElement, scriptRef);
+        if (target === null)
+            throw 404;
+        if (!target.src) {
+            const { rewrite } = await import('./rewrite.js');
+            rewrite(self, target);
+        }
+        const exportable = await target.beEnhanced.whenResolved('be-exportable');
+        return {
+            formulaEvaluator: exportable.exports[nameOfFormula]
+        };
     }
 }
 const tagName = 'be-for';
@@ -23,11 +41,18 @@ const xe = new XE({
         isEnh: true,
         propDefaults: {
             ...propDefaults,
+            scriptRef: 'previousElementSibling',
+            nameOfFormula: 'formula'
         },
         propInfo: {
             ...propInfo
         },
-        actions: {}
+        actions: {
+            onValues: 'Value',
+            importSymbols: {
+                ifAllOf: ['isParsed', 'nameOfFormula', 'args', 'scriptRef']
+            }
+        }
     },
     superclass: BeFor
 });
