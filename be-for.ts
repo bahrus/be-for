@@ -45,7 +45,8 @@ export class BeFor extends BE<AP, Actions> implements Actions{
         for(const arg of args!){
             const {prop, type} = arg;
             switch(type){
-                case '$':
+                //TODO:  common code with be-switched -- move to be-linked
+                case '$':{
                     const itemPropEl = await findRealm(enhancedElement, ['wis', prop!]) as HTMLElement;
                     if(!itemPropEl) throw 404;
                     if(itemPropEl.hasAttribute('contenteditable')){
@@ -58,6 +59,26 @@ export class BeFor extends BE<AP, Actions> implements Actions{
                             evalFormula(self);
                         });
                     }
+                    break;
+                }
+                case '@':{
+                    const inputEl = await findRealm(enhancedElement, ['wf', prop!]) as HTMLInputElement;
+                    if(!inputEl) throw 404;
+                    arg.signal = new WeakRef(inputEl);
+                    inputEl.addEventListener('input', e => {
+                        evalFormula(self);
+                    });
+                    break;
+                }
+                case '#':{
+                    const inputEl = await findRealm(enhancedElement, ['wrn', '#' + prop!]) as HTMLInputElement;
+                    if(!inputEl) throw 404;
+                    arg.signal = new WeakRef(inputEl);
+                    inputEl.addEventListener('input', e => {
+                        evalFormula(self);
+                    });
+                    break;
+                }
             }
         }
         evalFormula(self);
@@ -80,12 +101,19 @@ async function evalFormula(self: AP){
         inputObj[prop!] = val;
     }
     const value = await formulaEvaluator!(inputObj);
+    console.log({value, inputObj});
     await setItemProp(enhancedElement, value.value, enhancedElement.getAttribute('itemprop')!);
 }
 
 //shared with be-switched
 export function getValue(obj: SignalRefType){
     if(obj instanceof HTMLElement){
+        if('checked' in obj){
+            return obj.checked;
+        }
+        if(obj.hasAttribute('aria-checked')){
+            return obj.getAttribute('aria-checked') === 'true';
+        }
         if('value' in obj){
             return obj.value;
         }

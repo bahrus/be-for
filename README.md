@@ -24,38 +24,21 @@ Maybe this should derive from be-linked
 </div>
 ```
 
-## From be-linked [TODO]
-
-```html
-<div itemscope>
-    <link itemprop=isHappy>
-    <link itemprop=isWealthy>
-
-    ...
-
-    <script nomodule>
-        isHappy && !isWealthy
-    </script>
-    <link itemprop=isInNirvana be-linked='Compute value based on $isHappy, $isWealthy.'>
-</div>
-```
 
 ## Example 1b [TODO]
 
 ```html
-<div itemscope>
-    <form>
-        <link itemprop=isHappy>
-        <input name=isWealthy>
-        <div contenteditable id=liberated></div>
-        ...
+<form itemscope>
+    <link itemprop=isHappy href=https://schema.org/True>
+    <input type=checkbox name=isWealthy>
+    <div contenteditable id=liberated>abc</div>
+    ...
 
-        <script nomodule>
-            isHappy && !isWealthy && liberated.length > 17;
-        </script>
-        <link itemprop=isInNirvana be-for='Value based on $isHappy, @isWealthy, #liberated.'>
-    </form>
-</div>
+    <script nomodule>
+        isHappy && !isWealthy && liberated.length > 17;
+    </script>
+    <link itemprop=isInNirvana be-for='Value based on $isHappy, @isWealthy, #liberated.'>
+</form>
 ```
 
 ## Example 1c [TODO]
