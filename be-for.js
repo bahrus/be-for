@@ -3,6 +3,7 @@ import { XE } from 'xtal-element/XE.js';
 import { register } from 'be-hive/register.js';
 import { findRealm } from 'trans-render/lib/findRealm.js';
 import { setItemProp } from 'be-linked/setItemProp.js';
+import { getSignalVal } from 'be-linked/getSignalVal.js';
 export class BeFor extends BE {
     static get beConfig() {
         return {
@@ -91,31 +92,12 @@ async function evalFormula(self) {
             console.warn({ arg, msg: "Out of scope" });
             continue;
         }
-        const val = getValue(ref);
+        const val = getSignalVal(ref);
         inputObj[prop] = val;
     }
     const value = await formulaEvaluator(inputObj);
-    //console.log({value, inputObj});
+    console.log({ value, inputObj });
     await setItemProp(enhancedElement, value.value, enhancedElement.getAttribute('itemprop'));
-}
-//shared with be-switched
-export function getValue(obj) {
-    if (obj instanceof HTMLElement) {
-        if ('checked' in obj) {
-            return obj.checked;
-        }
-        if (obj.hasAttribute('aria-checked')) {
-            return obj.getAttribute('aria-checked') === 'true';
-        }
-        if ('value' in obj) {
-            return obj.value;
-        }
-        //TODO:  hyperlinks
-        return obj.textContent;
-    }
-    else {
-        return obj.value;
-    }
 }
 const tagName = 'be-for';
 const ifWantsToBe = 'for';
