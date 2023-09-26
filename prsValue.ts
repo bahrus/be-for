@@ -4,7 +4,7 @@ import {arr, tryParse} from 'be-enhanced/cpu.js';
 
 const reValueStatement: RegExpOrRegExpExt<ParsedValueStatement>[] = [
     {
-        regExp: new RegExp(String.raw `^valueBasedOn(?<dependencies>.*)`),
+        regExp: new RegExp(String.raw `^basedOn(?<dependencies>.*)`),
         defaultVals: {}
     }
 ]

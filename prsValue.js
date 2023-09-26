@@ -1,7 +1,7 @@
 import { tryParse } from 'be-enhanced/cpu.js';
 const reValueStatement = [
     {
-        regExp: new RegExp(String.raw `^valueBasedOn(?<dependencies>.*)`),
+        regExp: new RegExp(String.raw `^basedOn(?<dependencies>.*)`),
         defaultVals: {}
     }
 ];
