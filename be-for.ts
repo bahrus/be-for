@@ -48,7 +48,7 @@ export class BeFor extends BE<AP, Actions> implements Actions{
                 case '$':
                     const itemPropEl = await findRealm(enhancedElement, ['wis', prop!]) as HTMLElement;
                     if(!itemPropEl) throw 404;
-                    if(itemPropEl.contentEditable){
+                    if(itemPropEl.hasAttribute('contenteditable')){
                         throw 'NI'
                     }else{
                         import('be-value-added/be-value-added.js');
@@ -79,8 +79,8 @@ async function evalFormula(self: AP){
         const val = getValue(ref);
         inputObj[prop!] = val;
     }
-    const value = formulaEvaluator!(inputObj);
-    await setItemProp(enhancedElement, value, enhancedElement.getAttribute('itemprop')!);
+    const value = await formulaEvaluator!(inputObj);
+    await setItemProp(enhancedElement, value.value, enhancedElement.getAttribute('itemprop')!);
 }
 
 //shared with be-switched

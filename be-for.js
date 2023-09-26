@@ -42,7 +42,7 @@ export class BeFor extends BE {
                     const itemPropEl = await findRealm(enhancedElement, ['wis', prop]);
                     if (!itemPropEl)
                         throw 404;
-                    if (itemPropEl.contentEditable) {
+                    if (itemPropEl.hasAttribute('contenteditable')) {
                         throw 'NI';
                     }
                     else {
@@ -71,8 +71,8 @@ async function evalFormula(self) {
         const val = getValue(ref);
         inputObj[prop] = val;
     }
-    const value = formulaEvaluator(inputObj);
-    await setItemProp(enhancedElement, value, enhancedElement.getAttribute('itemprop'));
+    const value = await formulaEvaluator(inputObj);
+    await setItemProp(enhancedElement, value.value, enhancedElement.getAttribute('itemprop'));
 }
 //shared with be-switched
 export function getValue(obj) {
