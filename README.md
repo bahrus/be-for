@@ -1,6 +1,6 @@
-# be-for [WIP]
+# be-for
 
-Create inline formula evaluation from  HTML signals via local script tags.
+Perform inline formula evaluation from  HTML signals via local script tags.
 
 The *output* element supports an interesting use of the "for" attribute, which [be-calculating](https://github.com/bahrus/be-calculating) builds on.  However, be-calculating is somewhat tied to the output element.
 
@@ -55,9 +55,7 @@ Add more context to the scripting
     <script nomodule>
         ({isHappy, isWealthy, liberated}) => {
             console.log({isHappy, isWealthy, liberated});
-            return {
-                value: isHappy && !isWealthy && liberated.length > 17
-            };
+            return isHappy && !isWealthy && liberated.length > 17;
         }
     </script>
     <link itemprop=isInNirvana be-for='Value based on $isHappy, @isWealthy, #liberated.'>
@@ -79,7 +77,7 @@ Values coming from host (/)
 </my-custom-element>
 ```
 
-## Example 2a [TODO]
+## Example 2a
 
 ```html
 <form itemscope>

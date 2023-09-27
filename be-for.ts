@@ -124,7 +124,7 @@ async function evalFormula(self: AP){
         inputObj[prop!] = val;
     }
     const result = await formulaEvaluator!(inputObj);
-    const {value} = result
+    const value = result?.value === undefined ? result : result.value;
     if(firstInstruction.isAction){
         Object.assign(enhancedElement, value);
     }else{

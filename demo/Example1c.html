@@ -28,9 +28,7 @@
         <script nomodule>
             ({isHappy, isWealthy, liberated}) => {
                 console.log({isHappy, isWealthy, liberated});
-                return {
-                    value: isHappy && !isWealthy && liberated.length > 17
-                };
+                return isHappy && !isWealthy && liberated.length > 17;
             }
         </script>
         <link itemprop=isInNirvana be-for='Value based on $isHappy, @isWealthy, #liberated.'>

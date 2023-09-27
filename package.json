@@ -11,7 +11,7 @@
     "observe",
     "conditional"
   ],
-  "description": "Create inline computed microdata property HTML signals with script tags.",
+  "description": "Perform inline formula evaluation from HTML signals via local script tags.",
   "main": "be-for.js",
   "module": "be-for.js",
   "exports":{
