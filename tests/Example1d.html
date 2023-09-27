@@ -21,10 +21,21 @@
     </script>
 </head>
 <body>
-    <my-custom-element></my-custom-element>
+    <my-custom-element id=ce></my-custom-element>
+    <div id=target></div>
     <script type=module>
         import '../be-for.js';
         import '../my-custom-element/my-custom-element.js';
+    </script>
+    <script>
+        function runTest(){
+            if(ce.shadowRoot.querySelector('data').textContent === '529'){
+                target.setAttribute('mark', 'good');
+            }
+        }
+        setTimeout(() => {
+            runTest();
+        }, 2000);
     </script>
 </body>
 </html>
