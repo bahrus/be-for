@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Example 1b</title>
+    <title>Example 1c</title>
     <script type=importmap>
         {
             "imports": {
@@ -22,11 +22,14 @@
     <form itemscope>
         <link itemprop=isHappy href=https://schema.org/True>
         <input type=checkbox name=isWealthy>
-        <div contenteditable id=liberated>abcdefghijkmnopqrs</div>
+        <div contenteditable id=liberated>abcdefghijklmnopqrs</div>
         ...
     
         <script nomodule>
-            isHappy && !isWealthy && liberated.length > 17
+            ({isHappy, isWealthy, liberated}) => {
+                console.log({isHappy, isWealthy, liberated});
+                return isHappy && !isWealthy && liberated.length > 17;
+            }
         </script>
         <link id=link itemprop=isInNirvana be-for='Value based on $isHappy, @isWealthy, #liberated.'>
     </form>
