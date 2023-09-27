@@ -8,6 +8,7 @@ import {findRealm} from 'trans-render/lib/findRealm.js';
 import {BVAAllProps} from 'be-value-added/types';
 import {setItemProp} from 'be-linked/setItemProp.js';
 import {getSignalVal} from 'be-linked/getSignalVal.js';
+import {Actions as BPActions} from 'be-propagating/types';
 
 export class BeFor extends BE<AP, Actions> implements Actions{
     static override get beConfig(){
@@ -76,6 +77,18 @@ export class BeFor extends BE<AP, Actions> implements Actions{
                     if(!inputEl) throw 404;
                     arg.signal = new WeakRef(inputEl);
                     inputEl.addEventListener('input', e => {
+                        evalFormula(self);
+                    });
+                    break;
+                }
+                case '/': {
+                    const host = await findRealm(enhancedElement, 'hostish');
+                    if(!host) throw 404;
+                    import('be-propagating/be-propagating.js');
+                    const bePropagating = await (<any>host).beEnhanced.whenResolved('be-propagating') as BPActions;
+                    const signal = await bePropagating.getSignal(prop!);
+                    arg.signal = new WeakRef(signal);
+                    signal.addEventListener('value-changed', e => {
                         evalFormula(self);
                     });
                     break;

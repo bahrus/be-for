@@ -9,6 +9,7 @@
 	},
 	"files": [
 		"be-for.ts",
+		"my-custom-element/my-custom-element.ts"
 	],
 	"exclude":[
 		"node_modules"

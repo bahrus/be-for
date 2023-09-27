@@ -72,7 +72,7 @@ Values coming from host (/)
 <my-custom-element>
     #shadow
         <script nomodule>
-            myProp ^ 2
+            myProp ** 2
         </script>
         <data itemprop=squared be-for='Value based on /myProp.'>
         <be-hive></be-hive>

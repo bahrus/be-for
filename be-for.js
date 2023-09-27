@@ -77,6 +77,19 @@ export class BeFor extends BE {
                     });
                     break;
                 }
+                case '/': {
+                    const host = await findRealm(enhancedElement, 'hostish');
+                    if (!host)
+                        throw 404;
+                    import('be-propagating/be-propagating.js');
+                    const bePropagating = await host.beEnhanced.whenResolved('be-propagating');
+                    const signal = await bePropagating.getSignal(prop);
+                    arg.signal = new WeakRef(signal);
+                    signal.addEventListener('value-changed', e => {
+                        evalFormula(self);
+                    });
+                    break;
+                }
             }
         }
         evalFormula(self);
