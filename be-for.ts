@@ -111,7 +111,8 @@ export class BeFor extends BE<AP, Actions> implements Actions{
 async function evalFormula(self: AP){
     const {formulaEvaluator, instructions, enhancedElement} = self;
     const inputObj: {[key: string]:  any} = {};
-    const args = instructions![0].args;
+    const [firstInstruction] = instructions!;
+    const args = firstInstruction.args;
     for(const arg of args!){
         const {signal, prop} = arg;
         const ref = signal?.deref();
@@ -122,8 +123,14 @@ async function evalFormula(self: AP){
         const val = getSignalVal(ref);
         inputObj[prop!] = val;
     }
-    const value = await formulaEvaluator!(inputObj);
-    await setItemProp(enhancedElement, value.value, enhancedElement.getAttribute('itemprop')!);
+    const result = await formulaEvaluator!(inputObj);
+    const {value} = result
+    if(firstInstruction.isAction){
+        Object.assign(enhancedElement, value);
+    }else{
+        await setItemProp(enhancedElement, value, enhancedElement.getAttribute('itemprop')!);
+    }
+    
 }
 
 

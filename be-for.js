@@ -104,7 +104,8 @@ export class BeFor extends BE {
 async function evalFormula(self) {
     const { formulaEvaluator, instructions, enhancedElement } = self;
     const inputObj = {};
-    const args = instructions[0].args;
+    const [firstInstruction] = instructions;
+    const args = firstInstruction.args;
     for (const arg of args) {
         const { signal, prop } = arg;
         const ref = signal?.deref();
@@ -115,8 +116,14 @@ async function evalFormula(self) {
         const val = getSignalVal(ref);
         inputObj[prop] = val;
     }
-    const value = await formulaEvaluator(inputObj);
-    await setItemProp(enhancedElement, value.value, enhancedElement.getAttribute('itemprop'));
+    const result = await formulaEvaluator(inputObj);
+    const { value } = result;
+    if (firstInstruction.isAction) {
+        Object.assign(enhancedElement, value);
+    }
+    else {
+        await setItemProp(enhancedElement, value, enhancedElement.getAttribute('itemprop'));
+    }
 }
 const tagName = 'be-for';
 const ifWantsToBe = 'for';
