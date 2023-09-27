@@ -49,7 +49,7 @@ Maybe this should derive from be-linked
 
 ## Example 1c
 
-Add more context to the scripting
+Add more context to the scripting, support side effects.
 
 ```html
 <form itemscope>
