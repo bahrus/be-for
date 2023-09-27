@@ -1,6 +1,6 @@
 # be-for [WIP]
 
-Create inline computed microdata property HTML signals with script tags.
+Create inline formula evaluation from  HTML signals via local script tags.
 
 The *output* element supports an interesting use of the "for" attribute, which [be-calculating](https://github.com/bahrus/be-calculating) builds on.  However, be-calculating is somewhat tied to the output element.
 
@@ -89,14 +89,11 @@ Values coming from host (/)
     ...
 
     <script nomodule>
-        ({isHappy, isWealthy, liberated}) => {
-            console.log({isHappy, isWealthy, liberated});
-            return {
-                prop1: isHappy && !isWealthy && liberated.length > 17,
-                prop2: liberated.blink(),
-            };
-        }
+        ({
+            prop1: isHappy && !isWealthy && liberated.length > 17,
+            prop2: liberated.blink(),
+        })
     </script>
-    <any-element itemprop=isInNirvana be-for='Assign based on $isHappy, @isWealthy, #liberated.'>
+    <any-element itemprop=isInNirvana be-for='Action triggered by $isHappy, @isWealthy, #liberated.'></any-element>
 </form>
 ```

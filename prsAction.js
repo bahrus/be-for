@@ -1,22 +1,23 @@
 import { tryParse } from 'be-enhanced/cpu.js';
-const reValueStatement = [
+const reActionStatement = [
     {
-        regExp: new RegExp(String.raw `^basedOn(?<dependencies>.*)`),
+        regExp: new RegExp(String.raw `^triggeredBy(?<dependencies>.*)`),
         defaultVals: {}
     }
 ];
-export function prsValue(self) {
-    //be careful about making this asynchronous due to instructions getting out of sync
-    let { Value, instructions } = self;
+export function prsAction(self) {
+    //be careful about making this asynchronous due to args getting out of sync
+    let { Action, instructions } = self;
     if (instructions === undefined)
         instructions = [];
     const args = [];
     const instruction = {
-        args
+        args,
+        isAction: true
     };
     instructions.push(instruction);
-    const val0 = Value[0];
-    const test = tryParse(val0, reValueStatement);
+    const act0 = Action[0];
+    const test = tryParse(act0, reActionStatement);
     if (test === null)
         throw 'PE'; //Parse Error
     const { dependencies } = test;
@@ -30,7 +31,6 @@ export function prsValue(self) {
         };
         args.push(arg);
     }
-    //console.log({test, splitDependencies});
     return {
         instructions
     };

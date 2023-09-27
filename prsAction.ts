@@ -1,25 +1,26 @@
-import {AP, ProPAP, PAP, ParsedValueStatement, Arg, ForInstruction} from './types';
+import {AP, ProPAP, PAP, ParsedActionStatement, Arg, ForInstruction} from './types';
 import {ElTypes} from 'be-linked/types';
 import {RegExpOrRegExpExt} from 'be-enhanced/types';
 import {arr, tryParse} from 'be-enhanced/cpu.js';
 
-const reValueStatement: RegExpOrRegExpExt<ParsedValueStatement>[] = [
+const reActionStatement: RegExpOrRegExpExt<ParsedActionStatement>[] = [
     {
-        regExp: new RegExp(String.raw `^basedOn(?<dependencies>.*)`),
+        regExp: new RegExp(String.raw `^triggeredBy(?<dependencies>.*)`),
         defaultVals: {}
     }
 ]
-export function prsValue(self: AP) : PAP {
-    //be careful about making this asynchronous due to instructions getting out of sync
-    let {Value, instructions} = self;
+export function prsAction(self: AP) : PAP {
+    //be careful about making this asynchronous due to args getting out of sync
+    let {Action, instructions} = self;
     if(instructions === undefined) instructions = [];
     const args: Array<Arg> = [];
     const instruction: ForInstruction = {
-        args
+        args,
+        isAction: true
     };
     instructions.push(instruction);
-    const val0 = Value![0];
-    const test = tryParse(val0, reValueStatement) as ParsedValueStatement;
+    const act0 = Action![0];
+    const test = tryParse(act0, reActionStatement) as ParsedActionStatement;
     if(test === null) throw 'PE'; //Parse Error
     const {dependencies} = test;
     const splitDependencies = dependencies!.split(',').map(x => x.trim());
@@ -32,7 +33,6 @@ export function prsValue(self: AP) : PAP {
         };
         args.push(arg);
     }
-    //console.log({test, splitDependencies});
     return {
         instructions
     };

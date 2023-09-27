@@ -1,5 +1,6 @@
-export function rewrite({ enhancedElement, nameOfFormula, args }, scriptEl) {
+export function rewrite({ enhancedElement, nameOfFormula, instructions }, scriptEl) {
     const inner = scriptEl.innerHTML.trim();
+    const args = instructions[0].args;
     if (inner.indexOf('=>') === -1) {
         // const strArgs: string[] = [];
         // instance.getStringArgs(args, strArgs);

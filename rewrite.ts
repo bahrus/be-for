@@ -1,7 +1,8 @@
 import {AP} from './types';
 
-export function rewrite({enhancedElement, nameOfFormula, args}: AP, scriptEl: HTMLScriptElement){
+export function rewrite({enhancedElement, nameOfFormula, instructions}: AP, scriptEl: HTMLScriptElement){
     const inner = scriptEl.innerHTML.trim();
+    const args = instructions![0].args;
     if(inner.indexOf('=>') === -1){
         // const strArgs: string[] = [];
         // instance.getStringArgs(args, strArgs);

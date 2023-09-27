@@ -15,7 +15,12 @@ export class BeFor extends BE {
     async onValues(self) {
         //TODO:  cache like be-switched
         const { prsValue } = await import('./prsValue.js');
-        const parsed = await prsValue(self);
+        const parsed = prsValue(self);
+        return parsed;
+    }
+    async onActions(self) {
+        const { prsAction } = await import('./prsAction.js');
+        const parsed = prsAction(self);
         return parsed;
     }
     async importSymbols(self) {
@@ -35,7 +40,8 @@ export class BeFor extends BE {
         };
     }
     async observe(self) {
-        const { args, enhancedElement } = self;
+        const { instructions, enhancedElement } = self;
+        const args = instructions[0].args;
         for (const arg of args) {
             const { prop, type } = arg;
             switch (type) {
@@ -96,8 +102,9 @@ export class BeFor extends BE {
     }
 }
 async function evalFormula(self) {
-    const { formulaEvaluator, args, enhancedElement } = self;
+    const { formulaEvaluator, instructions, enhancedElement } = self;
     const inputObj = {};
+    const args = instructions[0].args;
     for (const arg of args) {
         const { signal, prop } = arg;
         const ref = signal?.deref();
@@ -128,11 +135,12 @@ const xe = new XE({
         },
         actions: {
             onValues: 'Value',
+            onActions: 'Action',
             importSymbols: {
-                ifAllOf: ['isParsed', 'nameOfFormula', 'args', 'scriptRef']
+                ifAllOf: ['isParsed', 'nameOfFormula', 'instructions', 'scriptRef']
             },
             observe: {
-                ifAllOf: ['formulaEvaluator', 'args']
+                ifAllOf: ['formulaEvaluator', 'instructions']
             }
         }
     },
