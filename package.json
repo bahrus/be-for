@@ -1,6 +1,6 @@
 {
   "name": "be-for",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "keywords": [
     "web-components",
     "web-component",
@@ -14,7 +14,7 @@
   "description": "Perform inline formula evaluation from HTML signals via local script tags.",
   "main": "be-for.js",
   "module": "be-for.js",
-  "exports":{
+  "exports": {
     ".": "./be-for.js",
     "./be-for.js": "./be-for.js"
   },
