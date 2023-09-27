@@ -1,7 +1,7 @@
 # be-for
 
-<!-- [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/be-switched)
-[![Playwright Tests](https://github.com/bahrus/be-switched/actions/workflows/CI.yml/badge.svg)](https://github.com/bahrus/be-switched/actions/workflows/CI.yml) -->
+<!-- [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/be-switched) -->
+[![Playwright Tests](https://github.com/bahrus/be-for/actions/workflows/CI.yml/badge.svg)](https://github.com/bahrus/be-for/actions/workflows/CI.yml) 
 [![NPM version](https://badge.fury.io/js/be-for.png)](http://badge.fury.io/js/be-for)
 [![How big is this package in your project?](https://img.shields.io/bundlephobia/minzip/be-for?style=for-the-badge)](https://bundlephobia.com/result?p=be-for)
 <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/be-for?compression=gzip">
