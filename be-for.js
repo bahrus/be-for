@@ -4,23 +4,36 @@ import { register } from 'be-hive/register.js';
 import { findRealm } from 'trans-render/lib/findRealm.js';
 import { setItemProp } from 'be-linked/setItemProp.js';
 import { getSignalVal } from 'be-linked/getSignalVal.js';
+const cache = new Map();
+const prsOnValuesCache = new Map();
+const prsOnActionsCache = new Map();
 export class BeFor extends BE {
     static get beConfig() {
         return {
             parse: true,
+            cache,
             parseAndCamelize: true,
             isParsedProp: 'isParsed'
         };
     }
     async onValues(self) {
-        //TODO:  cache like be-switched
-        const { prsValue } = await import('./prsValue.js');
-        const parsed = prsValue(self);
+        const { parsedFrom } = self;
+        let parsed = prsOnValuesCache.get(parsedFrom);
+        if (parsed === undefined) {
+            const { prsValue } = await import('./prsValue.js');
+            parsed = prsValue(self);
+            prsOnValuesCache.set(parsedFrom, parsed);
+        }
         return parsed;
     }
     async onActions(self) {
-        const { prsAction } = await import('./prsAction.js');
-        const parsed = prsAction(self);
+        const { parsedFrom } = self;
+        let parsed = prsOnActionsCache.get(parsedFrom);
+        if (parsed === undefined) {
+            const { prsAction } = await import('./prsAction.js');
+            parsed = prsAction(self);
+            prsOnActionsCache.set(parsedFrom, parsed);
+        }
         return parsed;
     }
     async importSymbols(self) {
@@ -141,8 +154,12 @@ const xe = new XE({
             ...propInfo
         },
         actions: {
-            onValues: 'Value',
-            onActions: 'Action',
+            onValues: {
+                ifAllOf: ['isParsed', 'Value'],
+            },
+            onActions: {
+                ifAllOf: ['isParsed', 'Action']
+            },
             importSymbols: {
                 ifAllOf: ['isParsed', 'nameOfFormula', 'instructions', 'scriptRef']
             },

@@ -10,25 +10,39 @@ import {setItemProp} from 'be-linked/setItemProp.js';
 import {getSignalVal} from 'be-linked/getSignalVal.js';
 import {Actions as BPActions} from 'be-propagating/types';
 
+const cache = new Map<string, {}>();
+const prsOnValuesCache = new Map<string, {}>();
+const prsOnActionsCache = new Map<string, {}>();
 export class BeFor extends BE<AP, Actions> implements Actions{
     static override get beConfig(){
         return {
             parse: true,
+            cache,
             parseAndCamelize: true,
             isParsedProp: 'isParsed'
         } as BEConfig
     }
 
     async onValues(self: this) {
-        //TODO:  cache like be-switched
-        const {prsValue} = await import('./prsValue.js');
-        const parsed = prsValue(self);
+        const {parsedFrom} = self;
+        let parsed = prsOnValuesCache.get(parsedFrom);
+        if(parsed === undefined){
+            const {prsValue} = await import('./prsValue.js');
+            parsed = prsValue(self);
+            prsOnValuesCache.set(parsedFrom, parsed);
+        }
+        
         return parsed as PAP;
     }
 
     async onActions(self: this){
-        const {prsAction} = await import('./prsAction.js');
-        const parsed = prsAction(self);
+        const {parsedFrom} = self;
+        let parsed = prsOnActionsCache.get(parsedFrom);
+        if(parsed === undefined){
+            const {prsAction} = await import('./prsAction.js');
+            parsed = prsAction(self);
+            prsOnActionsCache.set(parsedFrom, parsed);
+        }
         return parsed as PAP;
     }
 
@@ -153,8 +167,12 @@ const xe = new XE<AP, Actions>({
             ...propInfo
         },
         actions:{
-            onValues: 'Value',
-            onActions: 'Action',
+            onValues: {
+                ifAllOf: ['isParsed', 'Value'],
+            },
+            onActions: {
+                ifAllOf: ['isParsed', 'Action']
+            },
             importSymbols: {
                 ifAllOf: ['isParsed', 'nameOfFormula', 'instructions', 'scriptRef']
             },
