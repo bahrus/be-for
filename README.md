@@ -6,6 +6,8 @@
 [![How big is this package in your project?](https://img.shields.io/bundlephobia/minzip/be-for?style=for-the-badge)](https://bundlephobia.com/result?p=be-for)
 <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/npm/be-for?compression=gzip">
 
+see be-computed, replaces this.
+
 Perform inline formula evaluation from  HTML signals via local script tags.
 
 The *output* element supports an interesting use of the "for" attribute, which [be-calculating](https://github.com/bahrus/be-calculating) builds on.  However, be-calculating is somewhat tied to the output element.
