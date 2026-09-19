@@ -1,13 +1,15 @@
-# gist-in
+# be-for
 
-This *gist-in* package provides:
 
-1.  An exportable module that JS-based web servers and JS-based build tools can use to embed a github based gist of html (and js, css, json phase II) into an html stream for optimal performance, as long as the gist responds in a timely manner. [Phase II]
-2.  A fallback element enhancement similar to [pipe-in](https://github.com/bahrus/pipe-in) to request the gist resource in the browser client, and to patch the HTML with the delayed content.  In fact, gist-in is a very thin wrapper around pipe-in.
 
-Note that github's gists play very nicely from a CORS point of view, so rest assured that should not impose any browser issues.
+This *be-for* package provides:
 
-We make heavy use of [declarative partial updates](https://developer.chrome.com/docs/web-platform/declarative-partial-updates), both in spirit and in use of upcoming api's.
+1.  An exportable module that JS-based web servers and JS-based build tools can use to embed a github based gist or github pages src pointing to html (and js, css, json phase II) into an html stream for optimal performance, as long as the github resource responds in a timely manner. [Phase II]
+2.  A fallback element enhancement similar to [pipe-in](https://github.com/bahrus/pipe-in) to request the github resource in the browser client, and to patch the HTML with the delayed content.  In fact, be-for is a very thin wrapper around pipe-in.
+
+Note that github's gists and github pages play very nicely from a CORS point of view, so rest assured that they should not impose any browser issues.
+
+We make heavy use of [declarative partial updates](https://developer.chrome.com/docs/web-platform/declarative-partial-updates), both in spirit and in use of [upcoming api's / declarative attributes](https://github.com/WICG/declarative-partial-updates/blob/main/fragment-include-explainer.md).
 
 ```html
 <select>
@@ -22,10 +24,22 @@ We make heavy use of [declarative partial updates](https://developer.chrome.com/
 
 <!-- bottom of the page, typically -->
 
-<template gist-in="gist://bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/90e8c7ebfa3f63948f380d44d40b2663d19919e2/test.html" gist-in-for="options" gist-in-method="setHTMLUnsafe"></template>
+ <script type=importmap>
+ {
+    "imports": {
+        "bahrus/": "https://gist.githubusercontent.com/bahrus/"
+    }
+ }
+ </script>
+
+<template 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html" 
+    be-for="options" 
+    be-for-method="setHTMLUnsafe"
+></template>
 ```
 
-`gist-in-method="setHTMLUnsafe"` is needed here — see [Sanitizing](#sanitizing)
+`be-for-method="setHTMLUnsafe"` is needed here — see [Sanitizing](#sanitizing)
 below for why, and why the URL above is a `gist://` USL rather than a plain
 `https://gist.githubusercontent.com/...` one.
 
@@ -49,7 +63,12 @@ Searching for such markers can be rather taxing, requiring perhaps a TreeWalker 
 </select>
 
 
-<template gist-in="https://gist.githubusercontent.com/bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/90e8c7ebfa3f63948f380d44d40b2663d19919e2/test.html" gist-in-for="options" gist-in-for-hint="body select"></template>
+<template 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html" 
+    be-for="options" 
+    be-for-method="setHTMLUnsafe"
+    be-for-hint="body select"
+></template>
 ```
 
 
@@ -64,16 +83,16 @@ Searching is done within the element.getRootNode(), so templates inside shadow R
 The platform's *default* sanitizer is stricter than it might look — verified
 directly, it strips `<option>` elements entirely (not just leaves them
 unstyled), which breaks the flagship example above unless you opt out of it.
-gist-in exposes the same two escape hatches [pipe-in
+be-for exposes the same two escape hatches [pipe-in
 documents](https://github.com/bahrus/pipe-in#security), named and gated the
 same way:
 
-- **`gist-in-method="setHTMLUnsafe"`** (default `"setHTML"`) — named after,
+- **`be-for-method="setHTMLUnsafe"`** (default `"setHTML"`) — named after,
   and choosing between, the two real underlying methods, the same way
   pipe-in's own `[base]-method` selects one of its `streamHTML` /
   `streamHTMLUnsafe` / etc. `setHTMLUnsafe` skips sanitizing entirely. This is
   what the flagship example above actually needs to keep its `<option>`s.
-- **`gist-in-sanitizer='{"elements": ["option", "optgroup"]}'`** — a narrower,
+- **`be-for-sanitizer='{"elements": ["option", "optgroup"]}'`** — a narrower,
   explicit allow-list instead of going fully unsafe. Note this *replaces* the
   default allow-list rather than extending it — `{"elements": ["option"]}`
   keeps `<option>` but drops even the otherwise-default-safe `<b>`/`<em>`/etc.,
@@ -86,15 +105,13 @@ here.
 
 ### Security gate
 
-`gist-in-method="setHTMLUnsafe"` and `gist-in-sanitizer` are only honored when
-`gist-in`'s URL is one of:
+`be-for-method="setHTMLUnsafe"` and `be-for-sanitizer` are only honored when
+src's URL is one of:
 
 1. a same-origin path (starts with `/`),
 2. a bare specifier that resolves to something else via the page's own
    `<script type=importmap>`, or
-3. a `gist://` USL — its real destination is always the fixed
-   `gist.githubusercontent.com` host, never attacker-steerable via the
-   alias/owner/id, so it's trusted the same way a same-origin path is.
+3. a url that matches a key setting in importmap's.
 
 A literal cross-origin `https://…` URL gets neither override, no matter what's
 requested — same rule `pipe-in.js` enforces for its own unsafe methods /
@@ -102,7 +119,7 @@ custom sanitizer (shared code — see `pipe-in/fetch-and-set.js`'s
 `isOverrideTrusted`), so it's worth reading [pipe-in's own Security
 section](https://github.com/bahrus/pipe-in#security) for the reasoning. This
 is also why the flagship example above uses the `gist://` form rather than
-gist-in's own literal-URL form — a literal
+be-for's own literal-URL form — a literal
 `https://gist.githubusercontent.com/...` URL would be rejected the same as
 any other untrusted cross-origin URL.
 
@@ -112,19 +129,31 @@ If either an edit attribute is present:
 
 
 ```html
-<template gist-in="https://gist.githubusercontent.com/bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/90e8c7ebfa3f63948f380d44d40b2663d19919e2/test.html" gist-in-for="options" gist-in-show-edit-link></template>
+<template 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html" 
+    be-for="options" 
+    be-for-method="setHTMLUnsafe"
+    be-for-hint="body select"
+    be-for-edit-protocol=gist
+></template>
 ```
 
 Or a query string:
 
-location.href = '...?gist-in-show-edit-link=true'
+location.href = '...?be-for-edit-protocol=gist'
 
-Then add a hyperlink right after the template that allows the user (with appropriate credentials, as guarded by github.com itself) to open the gist and make edits.
+Then *be-for* adds a hyperlink right after the template that allows the user (with appropriate credentials, as guarded by github.com itself) to open the gist and make edits.
 
 If phase II is implemented, the server would replace the template above with something like:
 
 ```html
-<template gist-in-resolved="https://gist.githubusercontent.com/bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/90e8c7ebfa3f63948f380d44d40b2663d19919e2/test.html" for="options" gist-in-show-edit-link>
+<template 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html" 
+    be-for="options" 
+    be-for-method="setHTMLUnsafe"
+    be-for-hint="body select"
+    be-for-edit-protocol=gist
+>
     ...the contents of the link
 </template>
 <a href="urlToEditGist">Edit test.html</a>
