@@ -23,21 +23,14 @@
     "types.d.ts"
   ],
   "dependencies": {
-    "be-enhanced": "0.0.52",
-    "be-exportable": "0.0.90",
-    "be-hive": "0.0.123",
-    "be-linked": "0.0.48",
-    "be-propagating": "0.0.25",
-    "be-value-added": "0.0.7",
-    "trans-render": "0.0.706",
-    "xtal-element": "0.0.579"
+
   },
   "devDependencies": {
-    "@playwright/test": "1.38.1",
-    "may-it-serve": "0.0.6"
+    "@playwright/test": "1.63.0",
+    "spa-ssi": "0.0.28"
   },
   "scripts": {
-    "serve": "node node_modules/may-it-serve",
+    "serve": "node ./node_modules/spa-ssi/serve.js",
     "test": "playwright test",
     "safari": "npx playwright wk http://localhost:3030",
     "update": "ncu -u && npm install"

@@ -163,3 +163,149 @@ don't want.
    `src` the intended direction now (point 5)?
 3. Anything about the `buffer`-defaults-opposite-the-spec call (point 2) you'd
    push back on?
+
+## Bruce's Response I
+
+One possible correction:  I think we established in other chats that streamHTML does exist in Chrome Canary with flags set, the flags pictured in the README.md.  But I have verified that the proposal I linked to, which allows for client side includes via attributes, is not yet even in Chrome Canary, nor can I find a roadmap for when it will be.
+
+I realize, with the help of your feedback, that my proposal / README.md suffered from at least one fatal flaw, and that it is also suffers from a vague sense of purpose.
+
+You raised the prospect that be-for could serve as a polyfill for the linked proposal.  I reread the proposal, carefully this time, and I think it would be quite difficult to polyfill certain pieces of it -- in particular the mutation observer enhancements, the fragment-src CSP level protections for specifying allowed domains to pull from, without which having a sanitize=unsafe attribute is probably not viable.
+
+What I was thinking more vaguely is that be-for would provide some value-add on top of this standard, and utilize it as much as possible as it rolls out (eliminating no longer needed code by setting the attributes dynamically), still providing some value-add and until it rolls out, serving as a  kind of shoddy polyfill, probably too different from the proposal to call it a proper polyfill.
+
+For now, I think we need to rest on the importmap / relative path security checks that pipe-in relies on (hopefully).
+
+The fatal flaw is that, based on the specs, should the browser start implementing it:
+
+```html
+<template 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html 
+    be-for="options" 
+    be-for-method="setHTMLUnsafe"
+    be-for-hint="body select"
+    be-for-edit-protocol=gist
+>
+    ...the contents of the link
+</template>
+<a href="urlToEditGist">Edit test.html</a>
+```
+
+would be problematic.  The browser wouldn't see the "for" attribute, and think that in needs to start streaming the url before the template element.  So this "polyfill" wouldn't be forward compatible at all.
+
+I'm thinking pipe-in should acquire a new attribute, pipe-in-for, that can target a processing instruction comment.  And the associated hint.  So it becomes a shoddy polyfill for the proposal.
+
+So the value add that be-for provides is simply being able to take some string that represents a resource, and manipulate it so that url that is streamed or buffered in is the raw or api or the page url, and it takes care of setting pipe-in's url to the proper value and creating the proper edit link.  What are your thoughts.
+
+## Claude's Response
+
+Your fatal-flaw read is right, and sharper than I gave it credit for — I went
+back to the explainer specifically checking whether `src` is gated by `for`
+at all, and it's explicit:
+
+> "An HTML `<template>` is active if it has a `for` attribute, a `src`
+> attribute, **or both**."
+
+> "**In-place Include (empty `for=""` / `for` omitted)**: Inserts the content
+> in-place at the template's position in the HTML stream."
+
+So `src` alone activates it, `for` being entirely absent doesn't mean inert —
+it means *in-place*. A future browser that ships even a first slice of this
+would take your `<template src=… be-for="options">` and splice the fetched
+content in at the template's own spot, at the bottom of the page, ignoring
+`be-for` entirely (it doesn't know that attribute exists) — the opposite of
+what you want. I owe you a correction on my own point 1 last message: I said
+"no notes here" on `src` + `be-for`; I hadn't checked this interaction and
+should have. Good catch. Also confirmed for you: the explainer has **zero**
+discussion of non-supporting-browser behavior or a polyfill path — this is
+early enough that there's nothing to lean on there.
+
+### The pivot is right, and it's a real simplification, not just a workaround
+
+Pushing marker-targeting (`pipe-in-for` + hint) down into `pipe-in` itself,
+and narrowing `be-for` to "resolve a reference → configure pipe-in's real
+attributes → build the edit link," is better than what `gist-in` does today,
+independent of the forward-compat problem:
+
+- `gist-in.js` currently **duplicates** `pipe-in`'s job — it has its own
+  `#findMarker`, its own fetch (`fetchText`/`get()`), its own
+  sanitize-and-splice (`setInto`). Two implementations of "fetch, sanitize,
+  insert." Your pivot collapses that to one: `pipe-in` gains marker-targeting,
+  `gist-in`'s `#findMarker`/`replaceWith` logic moves *into* `pipe-in.js`, and
+  `be-for` stops touching the DOM at all.
+- It also resolves my own open "should `buffer` default to true or false"
+  question from last message — there's no real choice left to make. A
+  `<?marker>` PI node has no live streaming sink (you can't call
+  `.streamHTML()` on a comment), so **`pipe-in-for` targeting is inherently
+  the one-shot path** — fetch fully, sanitize into a detached scratch element,
+  splice in once. That's exactly `fetch-and-set.js`'s existing
+  `fetchText`/`setInto`, so `pipe-in.js` internally calling *its own*
+  `fetch-and-set.js` for the `pipe-in-for` case (instead of `gist-in`
+  importing it separately) is the natural implementation — reuse, not new
+  code. Self-targeting keeps real streaming exactly as it works today.
+  `sanitize`/`buffer` as *be-for's own* attributes mostly evaporate; they were
+  standing in for a choice that turns out not to exist once targeting a
+  marker implies one-shot.
+- This also matches your own framing better than "polyfill" ever did:
+  `pipe-in` is the "shoddy, evolving stand-in for the platform primitive" (as
+  it already was for streaming) — `be-for` is a value-add layer *above* it
+  that never tries to reimplement platform mechanics (mutation observation,
+  `fragment-src` CSP) at all. That's a real answer to "vague sense of
+  purpose": be-for's purpose is now exactly one sentence — turn a reference to
+  a git-hosted resource into the right `pipe-in`/`pipe-in-for` attributes plus
+  an edit link.
+
+### Two things this pivot exposes that need a decision
+
+**1. The security gate has to move too, and needs one new allowlist.**
+Once `be-for` resolves `githubpages://bahrus/…` down to a literal
+`https://raw.githubusercontent.com/…` (or `api.github.com`/`.github.io`) URL
+and does `enhancedElement.setAttribute('pipe-in', resolvedUrl)`, that's now
+indistinguishable — as far as `pipe-in.js`'s own `isOverrideTrusted` is
+concerned — from an author hand-typing that URL directly. Today that's a
+**bare cross-origin `https://` URL**, which `pipe-in.js:65` explicitly refuses
+the unsafe-method/custom-sanitizer override for. Your flagship example
+(preserving `<option>`) needs that override. So either:
+  - **(a)** `pipe-in.js`'s `isOverrideTrusted` grows a small pinned-host
+    allowlist — `gist.githubusercontent.com`, `api.github.com`,
+    `raw.githubusercontent.com`, `*.github.io` — the same "fixed,
+    never-attacker-steerable host" reasoning `gist-in`'s original security
+    section already used, just relocated from `gist-in`'s bespoke check into
+    `pipe-in`'s shared one so *anyone* using `pipe-in-for` with a
+    `be-for`-resolved URL benefits, not just `be-for` itself; or
+  - **(b)** `be-for` requires/injects an import-map entry for the resolved
+    host and sets `pipe-in` to a bare specifier instead of the literal URL, so
+    it clears the *existing* import-map trust category with zero `pipe-in`
+    changes.
+
+  (a) is less machinery and generalizes past `be-for`; (b) needs no `pipe-in`
+  change but pushes real complexity onto `be-for` (dynamically-injected import
+  maps are shaky — browsers only reliably honor one, present before first use)
+  or onto the page author (pre-declare the mapping themselves). I'd go with
+  (a). This is also the direct resolution of the open question from my last
+  message about the dropped `gist://`-trusted-by-construction rule — it
+  wasn't a `be-for` README omission, it belongs one layer down now.
+
+**2. Does setting `pipe-in`/`pipe-in-for` attributes dynamically actually get
+picked up?** Checked rather than assumed: `mount-observer`'s
+`MountObserver.ts` configures its `MutationObserver` with
+`{childList: true, attributes: true, subtree: true}` and explicitly handles
+`mutation.type === 'attributes'` by mounting newly-matching elements. So yes —
+`be-for`'s `hydrate()` computing the resolved URL and calling
+`enhancedElement.setAttribute('pipe-in', resolvedUrl)` (+ `pipe-in-for`, hint,
+method) will be picked up by the same live-attribute machinery that already
+lets `be-persistent`'s rules react to attribute changes. Confirmed, not just
+hoped-for.
+
+### One naming question I don't want to decide for you
+
+For the `setHTML`/`setHTMLUnsafe` choice in `pipe-in-for` mode: should
+`pipe-in` just grow those two as **more values of its existing
+`[base]-method`** enum (meaningful only when `pipe-in-for` is present,
+alongside the stream* ones), or should `be-for` expose its *own* simpler
+convenience attribute (`be-for-unsafe`, or a `sanitize`-shaped one per the
+spec's naming) that translates to the right `pipe-in-method` underneath? The
+first keeps one vocabulary in one place; the second keeps `be-for`'s surface
+closer to the spec's own naming, which was the original point of piggybacking
+on it. Which do you want?
+

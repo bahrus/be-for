@@ -33,7 +33,7 @@ We make heavy use of [declarative partial updates](https://developer.chrome.com/
  </script>
 
 <template 
-    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html" 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html
     be-for="options" 
     be-for-method="setHTMLUnsafe"
 ></template>
@@ -64,7 +64,7 @@ Searching for such markers can be rather taxing, requiring perhaps a TreeWalker 
 
 
 <template 
-    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html" 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html
     be-for="options" 
     be-for-method="setHTMLUnsafe"
     be-for-hint="body select"
@@ -130,7 +130,7 @@ If either an edit attribute is present:
 
 ```html
 <template 
-    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html" 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html
     be-for="options" 
     be-for-method="setHTMLUnsafe"
     be-for-hint="body select"
@@ -148,7 +148,7 @@ If phase II is implemented, the server would replace the template above with som
 
 ```html
 <template 
-    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html" 
+    src=bahrus/3c9ed8541984b8cd38bc848edacf741a/raw/96ff1c5eb7234a0c68d824ab76ca9be54b29300b/test.html 
     be-for="options" 
     be-for-method="setHTMLUnsafe"
     be-for-hint="body select"
